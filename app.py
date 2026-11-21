@@ -27,18 +27,14 @@ from langchain_core.prompts import ChatPromptTemplate
 
 load_dotenv()
 
-# --------------------------------------------------------------------------
-# Config
-# --------------------------------------------------------------------------
+
 PERSIST_DIR = "chroma_db"
 EMBED_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 LLM_REPO_ID = "openai/gpt-oss-120b"
 
 st.set_page_config(page_title="PDF RAG Chat", page_icon="📚", layout="wide")
 
-# --------------------------------------------------------------------------
-# Cached resources
-# --------------------------------------------------------------------------
+
 @st.cache_resource(show_spinner=False)
 def get_embedding_model():
     return HuggingFaceEmbeddings(model_name=EMBED_MODEL_NAME)
@@ -81,9 +77,8 @@ Question:
     )
 
 
-# --------------------------------------------------------------------------
-# Core pipeline functions
-# --------------------------------------------------------------------------
+
+
 def build_vectorstore_from_pdf(pdf_path: str, persist_dir: str = PERSIST_DIR):
     """Load a PDF, split it into chunks, embed, and persist into Chroma."""
     loader = PyMuPDFLoader(pdf_path)
@@ -140,9 +135,8 @@ if "book_name" not in st.session_state:
     st.session_state.book_name = None
 
 
-# --------------------------------------------------------------------------
-# Sidebar: upload + book management
-# --------------------------------------------------------------------------
+
+
 with st.sidebar:
     st.header("📚 Upload your book")
 
@@ -169,7 +163,6 @@ with st.sidebar:
 
     st.divider()
 
-    # Allow reconnecting to a previously built DB without re-uploading
     if st.session_state.vectorstore is None and os.path.exists(PERSIST_DIR):
         if st.button("Load existing knowledge base"):
             with st.spinner("Loading existing Chroma DB..."):
@@ -184,9 +177,8 @@ with st.sidebar:
         st.session_state.messages = []
         st.rerun()
 
-# --------------------------------------------------------------------------
-# Main area: chat interface
-# --------------------------------------------------------------------------
+
+
 st.title("📖 Chat with your PDF")
 st.caption("Upload a book in the sidebar, build the knowledge base, then ask questions about it.")
 
@@ -198,7 +190,7 @@ else:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
-    # Chat input
+
     user_query = st.chat_input("Ask a question about the document...")
 
     if user_query:
